@@ -2,19 +2,11 @@ name: Send Alzheimer News
 
 on:
   schedule:
-    - cron: '0 21 * * *'  # JST 6:00（UTCで指定）
+    - cron: '0 21 * * *'  # 毎朝6:00 JST（UTCで指定）
   workflow_dispatch:
 
 jobs:
   send-news:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-      - name: I
 
 mkdir -p .github/workflows
 
@@ -23,7 +15,7 @@ name: Send Alzheimer News
 
 on:
   schedule:
-    - cron: '0 21 * * *'  # JST 6:00（UTCで指定）
+    - cron: '0 21 * * *'  # 毎朝6:00 JST（UTCで指定）
   workflow_dispatch:
 
 jobs:
