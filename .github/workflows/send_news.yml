@@ -3,9 +3,13 @@ name: Send Alzheimer News
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   send-news:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
