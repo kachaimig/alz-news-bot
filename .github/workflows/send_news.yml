@@ -1,0 +1,41 @@
+name: Send Alzheimer News
+
+on:
+  schedule:
+    - cron: '0 21 * * *'  # JST 6:00（UTCで指定）
+  workflow_dispatch:
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: I
+
+mkdir -p .github/workflows
+
+cat > .github/workflows/send_news.yml <<EOF
+name: Send Alzheimer News
+
+on:
+  schedule:
+    - cron: '0 21 * * *'  # JST 6:00（UTCで指定）
+  workflow_dispatch:
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install openai
+      - name: Run email script
+        run: python send_news.py
