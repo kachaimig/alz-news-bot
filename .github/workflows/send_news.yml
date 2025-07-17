@@ -24,3 +24,6 @@ jobs:
         run: python send_news.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          RECIPIENTS: ${{ secrets.RECIPIENTS }}
