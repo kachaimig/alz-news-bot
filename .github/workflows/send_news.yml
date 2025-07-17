@@ -7,6 +7,12 @@ jobs:
   send-news:
     runs-on: ubuntu-latest
 
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      RECIPIENTS: ${{ secrets.RECIPIENTS }}
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -22,8 +28,3 @@ jobs:
 
       - name: Run email script
         run: python send_news.py
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          RECIPIENTS: ${{ secrets.RECIPIENTS }}
