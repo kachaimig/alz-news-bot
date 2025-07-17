@@ -2,16 +2,12 @@ name: Send Alzheimer News
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * *'  # JST 18:00（UTC 9:00）に毎日実行
 
 jobs:
   send-news:
     runs-on: ubuntu-latest
-
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
-      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-      RECIPIENTS: ${{ secrets.RECIPIENTS }}
 
     steps:
       - name: Check out repository
@@ -23,8 +19,12 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install openai
 
       - name: Run email script
         run: python send_news.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          RECIPIENTS: ${{ secrets.RECIPIENTS }}
