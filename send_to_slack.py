@@ -9,7 +9,7 @@ message = "🧠 *Slack投稿テストです* 🧠\n\nBotが正常に動作しま
 
 try:
     response = client.chat_postMessage(
-        channel="#general",  # ← 投稿先のチャンネル名を変えてもOKです
+        channel="#alz-news-bot",  # ← 修正済みチャンネル名
         text=message
     )
     print("✅ 投稿成功:", response["ts"])
