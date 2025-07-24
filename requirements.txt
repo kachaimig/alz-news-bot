@@ -1,0 +1,5 @@
+feedparser
+slack_sdk
+openai
+beautifulsoup4
+requests
