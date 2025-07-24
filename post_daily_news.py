@@ -39,16 +39,22 @@ def is_english(text):
     except:
         return False
 
-# ==== 翻訳関数（OpenAI使用） ====
-def translate(title_en):
+# ==== 翻訳関数（OpenAI使用・デバッグprint付き） ====
+def translate_title(text):
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": f"次の英語のニュース記事タイトルを自然な日本語に翻訳してください：\n{title_en}"}],
-            max_tokens=100
+            messages=[
+                {"role": "system", "content": "Translate the following news headline into natural Japanese."},
+                {"role": "user", "content": text}
+            ],
+            max_tokens=60
         )
-        return response["choices"][0]["message"]["content"].strip()
-    except Exception:
+        translation = response.choices[0].message.content.strip()
+        print(f"翻訳成功: {text} -> {translation}")
+        return translation
+    except Exception as e:
+        print(f"翻訳失敗エラー詳細: {e}")
         return "（翻訳失敗）"
 
 # ==== フィードから記事を取得（キーワード絞り込み有り） ====
@@ -86,7 +92,6 @@ def get_recent_articles():
                     continue
                 if link in seen_urls:
                     continue
-                # キーワード絞り込み
                 if not (contains_keyword(title) or contains_keyword(summary)):
                     continue
                 seen_urls.add(link)
@@ -106,7 +111,7 @@ def format_articles_for_slack(articles):
     for art in articles:
         line = f"🔹 [{art['site']}]｜{art['date']}\n{art['title']}"
         if is_english(art["title"]):
-            ja_title = translate(art["title"])
+            ja_title = translate_title(art["title"])
             line += f"\n（{ja_title}）"
         line += f"\n{art['link']}\n"
         message_lines.append(line)
