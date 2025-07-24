@@ -16,13 +16,11 @@ client = WebClient(token=SLACK_BOT_TOKEN)
 today = datetime.utcnow()
 seven_days_ago = today - timedelta(days=7)
 
-# ==== フィルター用キーワード ====
 KEYWORDS = [
     "アルツハイマー", "認知症", "レヴィ小体", "アミロイド", "リン酸化タウ", "MCI", "軽度認知障害",
     "認知機能", "長谷川式", "神経心理検査", "alzheimer", "dementia", "経路統合能", "path integration"
 ]
 
-# ==== キーワード判定関数 ====
 def contains_keyword(text):
     if not text:
         return False
@@ -32,17 +30,16 @@ def contains_keyword(text):
             return True
     return False
 
-# ==== 英語判定用（簡易） ====
 def is_english(text):
     try:
         return text and all(ord(c) < 128 or c.isspace() for c in text[:50])
     except:
         return False
 
-# ==== 翻訳関数（OpenAI使用・デバッグprint付き） ====
+# ==== 最新のOpenAIライブラリ対応に書き換えた翻訳関数 ====
 def translate_title(text):
     try:
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "Translate the following news headline into natural Japanese."},
@@ -57,7 +54,6 @@ def translate_title(text):
         print(f"翻訳失敗エラー詳細: {e}")
         return "（翻訳失敗）"
 
-# ==== フィードから記事を取得（キーワード絞り込み有り） ====
 def get_recent_articles():
     articles = []
     seen_urls = set()
@@ -105,7 +101,6 @@ def get_recent_articles():
             continue
     return sorted(articles, key=lambda x: x["date"], reverse=True)[:10]
 
-# ==== Slack投稿用メッセージ作成 ====
 def format_articles_for_slack(articles):
     message_lines = []
     for art in articles:
@@ -117,7 +112,6 @@ def format_articles_for_slack(articles):
         message_lines.append(line)
     return "\n".join(message_lines)
 
-# ==== Slackへ送信 ====
 def post_to_slack(message):
     try:
         client.chat_postMessage(
@@ -128,7 +122,6 @@ def post_to_slack(message):
     except Exception as e:
         print(f"❌ 投稿エラー: {e}")
 
-# ==== メイン実行 ====
 if __name__ == "__main__":
     articles = get_recent_articles()
     if not articles:
