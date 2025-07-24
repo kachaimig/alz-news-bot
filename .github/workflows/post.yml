@@ -1,0 +1,30 @@
+name: Post Daily News to Slack
+
+on:
+  schedule:
+    - cron: '0 23 * * *'  # 毎日 日本時間の朝8時に実行される設定（UTC時間23時）
+  workflow_dispatch:      # 手動で実行できるようにする設定
+
+jobs:
+  run-daily-post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Python をセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 依存パッケージをインストール
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: ニュースをSlackへ投稿
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python post_daily_news.py
