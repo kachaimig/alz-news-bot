@@ -26,3 +26,5 @@ jobs:
         run: pip install slack_sdk
 
       - name: Run Slack post script
+        run: python send_to_slack.py
+
