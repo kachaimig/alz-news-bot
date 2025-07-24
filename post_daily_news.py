@@ -18,7 +18,7 @@ seven_days_ago = today - timedelta(days=7)
 
 KEYWORDS = [
     "アルツハイマー", "認知症", "レヴィ小体", "アミロイド", "リン酸化タウ", "MCI", "軽度認知障害",
-    "認知機能", "長谷川式", "神経心理検査", "alzheimer", "dementia", "経路統合能", "path integration"
+    "認知機能", "長谷川式", "神経心理検査"
 ]
 
 def contains_keyword(text):
