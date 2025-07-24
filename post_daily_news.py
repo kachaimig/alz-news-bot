@@ -51,7 +51,7 @@ def translate(title_en):
             max_tokens=100
         )
         return response["choices"][0]["message"]["content"].strip()
-    except Exception as e:
+    except Exception:
         return "（翻訳失敗）"
 
 # ==== フィードから記事を取得 ====
@@ -103,8 +103,8 @@ def post_to_slack(message):
             text=message
         )
         print("✅ 投稿成功")
-    except SlackApiError as e:
-        print(f"❌ Slack投稿エラー: {e.response['error']}")
+    except Exception as e:
+        print(f"❌ 投稿エラー: {e}")
 
 # ==== メイン実行 ====
 if __name__ == "__main__":
