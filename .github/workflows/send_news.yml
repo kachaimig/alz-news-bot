@@ -1,7 +1,9 @@
 name: Send Alzheimer News to Slack
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:   # 手動実行
+  schedule:
+    - cron: '0 23 * * *'  # 毎日23時UTC（JST朝8時）
 
 permissions:
   contents: read
@@ -12,6 +14,7 @@ jobs:
 
     env:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
     steps:
       - name: Check out repository
@@ -23,11 +26,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install slack_sdk
+        run: pip install --upgrade openai slack_sdk feedparser beautifulsoup4 requests
 
       - name: Run Slack post script
         run: python send_to_slack.py
-
-on:
-  schedule:
-    - cron: '0 23 * * *'  # JST 8:00 = UTC 23:00 (前日の23時)
