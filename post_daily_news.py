@@ -16,24 +16,21 @@ client = WebClient(token=SLACK_BOT_TOKEN)
 today = datetime.utcnow()
 seven_days_ago = today - timedelta(days=7)
 
-# ==== ニュースフィード（RSS）一覧 ====
-RSS_FEEDS = {
-    "Alzforum": "https://www.alzforum.org/rss/feed",
-    "EurekAlert - Neuroscience": "https://www.eurekalert.org/rss/neuroscience.xml",
-    "ScienceDaily - Alzheimer": "https://www.sciencedaily.com/rss/health_medicine/alzheimers.xml",
-    "NIH News Releases": "https://www.nih.gov/news-events/news-releases/rss.xml",
-    "Alzheimer's Association": "https://www.alz.org/news/feed",
-    "Medical Xpress - Alzheimer": "https://medicalxpress.com/rss-feed/alzheimer-dementia-news/",
-    "Neuroscience News": "https://neurosciencenews.com/feed/",
-    "The Guardian - Neuroscience": "https://www.theguardian.com/science/neuroscience/rss",
-    "Nature News": "https://www.nature.com/subjects/neuroscience.rss",
-    "GIGAZINE": "https://gigazine.net/news/rss_2.0/",
-    "ナゾロジー": "https://nazology.net/feed",
-    "ITmedia NEWS": "https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml",
-    "lab-brain": "https://lab-brain.com/feed/",
-    "よろず〜ニュース": "https://yorozoonews.jp/rss",
-    "DIME": "https://dime.jp/feed/"
-}
+# ==== フィルター用キーワード ====
+KEYWORDS = [
+    "アルツハイマー", "認知症", "レヴィ小体", "アミロイド", "リン酸化タウ", "MCI", "軽度認知障害",
+    "認知機能", "長谷川式", "神経心理検査", "alzheimer", "dementia", "経路統合能", "path integration"
+]
+
+# ==== キーワード判定関数 ====
+def contains_keyword(text):
+    if not text:
+        return False
+    text_lower = text.lower()
+    for kw in KEYWORDS:
+        if kw.lower() in text_lower:
+            return True
+    return False
 
 # ==== 英語判定用（簡易） ====
 def is_english(text):
@@ -54,16 +51,33 @@ def translate(title_en):
     except Exception:
         return "（翻訳失敗）"
 
-# ==== フィードから記事を取得 ====
+# ==== フィードから記事を取得（キーワード絞り込み有り） ====
 def get_recent_articles():
     articles = []
     seen_urls = set()
-    for site, url in RSS_FEEDS.items():
+    for site, url in {
+        "Alzforum": "https://www.alzforum.org/rss/feed",
+        "EurekAlert - Neuroscience": "https://www.eurekalert.org/rss/neuroscience.xml",
+        "ScienceDaily - Alzheimer": "https://www.sciencedaily.com/rss/health_medicine/alzheimers.xml",
+        "NIH News Releases": "https://www.nih.gov/news-events/news-releases/rss.xml",
+        "Alzheimer's Association": "https://www.alz.org/news/feed",
+        "Medical Xpress - Alzheimer": "https://medicalxpress.com/rss-feed/alzheimer-dementia-news/",
+        "Neuroscience News": "https://neurosciencenews.com/feed/",
+        "The Guardian - Neuroscience": "https://www.theguardian.com/science/neuroscience/rss",
+        "Nature News": "https://www.nature.com/subjects/neuroscience.rss",
+        "GIGAZINE": "https://gigazine.net/news/rss_2.0/",
+        "ナゾロジー": "https://nazology.net/feed",
+        "ITmedia NEWS": "https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml",
+        "lab-brain": "https://lab-brain.com/feed/",
+        "よろず〜ニュース": "https://yorozoonews.jp/rss",
+        "DIME": "https://dime.jp/feed/"
+    }.items():
         try:
             feed = feedparser.parse(url)
             for entry in feed.entries:
                 title = entry.title
                 link = entry.link
+                summary = entry.get("summary", "")
                 pub_date = entry.get("published_parsed") or entry.get("updated_parsed")
                 if not pub_date:
                     continue
@@ -71,6 +85,9 @@ def get_recent_articles():
                 if pub_date_dt < seven_days_ago:
                     continue
                 if link in seen_urls:
+                    continue
+                # キーワード絞り込み
+                if not (contains_keyword(title) or contains_keyword(summary)):
                     continue
                 seen_urls.add(link)
                 articles.append({
