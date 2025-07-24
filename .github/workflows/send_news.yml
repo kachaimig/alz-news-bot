@@ -1,7 +1,7 @@
 name: Send Alzheimer News to Slack
 
 on:
-  workflow_dispatch:  # 手動実行
+  workflow_dispatch:
 
 permissions:
   contents: read
