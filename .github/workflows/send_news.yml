@@ -28,3 +28,6 @@ jobs:
       - name: Run Slack post script
         run: python send_to_slack.py
 
+on:
+  schedule:
+    - cron: '0 23 * * *'  # JST 8:00 = UTC 23:00 (前日の23時)
