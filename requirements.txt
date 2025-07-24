@@ -1,5 +1,5 @@
 feedparser
 slack_sdk
-openai
+openai>=1.7.0
 beautifulsoup4
 requests
